@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Bibiana Toro" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.ico">
+    <title>Project 1</title>
+    <meta name="generator" content="Hugo 0.70.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../blog/">BLOG</a></li>
+        
+        <li><a href="../projects/">PROJECTS</a></li>
+        
+        <li><a href="../resume.docx">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../project1/">Project 1</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="bibiana-toro-bmt897" class="section level3">
+<h3>Bibiana Toro, bmt897</h3>
+</div>
+<div id="r-markdown" class="section level2">
+<h2>R Markdown</h2>
+<p>The two datasets that I have chosen include healthcare statistics for each county in the state of Texas. Data set 1 includes counties with different lifestyle choices such as percentage of people who drink, smoke, and their access to excersise in each county. Data set 2, then includes an overview of what is found in each county. For example, this data set includes the number of primary physicians per county as well as the population in each county. They were aquired by looking at the texas Department of Health for their latest information collected.</p>
+<p>This data was interesting to me, because healthcare disparities and access to healthcare are some topics that are close to me. I have lived in areas that were completely different in terms of healthcare, and it really makes a difference to the lifestyle that people have. I expect to see a big difference of the number of physicians there are in smaller populated cities. I also then expect to see higher rates of smoking and drinking. Due to smaller population sizes, I also expect to see some corrolation with access to excersise. Texas is such a huge state, but resources are not evely dirstriubted throughout. Therefore, I expect to see relationships between almost all my variables. I expect to see this, because I it has been researched before how number of physicians vary depending on size of town, and the size of town will affect what kinds of lifestyles are available to people.</p>
+<pre class="r"><code>library(dplyr)
+library(tidyverse)
+
+library(fivethirtyeight)
+
+
+
+library(reshape2)
+library(ggplot2)
+
+dataset1 &lt;- read.csv(&quot;dataset1.csv&quot;)
+dataset2 &lt;- read.csv(&quot;dataset2.csv&quot;)
+
+
+dataset2 %&gt;% select(County, Population, Number_Primary_Care_Physicians)</code></pre>
+<pre><code>##            County Population Number_Primary_Care_Physicians
+## 1                   25145561                          16815
+## 2        Anderson      58458                             20
+## 3         Andrews      14786                              7
+## 4        Angelina      86771                             52
+## 5         Aransas      23158                             13
+## 6          Archer       9054                             NA
+## 7       Armstrong       1901                              0
+## 8        Atascosa      44911                              8
+## 9          Austin      28417                              6
+## 10         Bailey       7165                              3
+## 11        Bandera      20485                              6
+## 12        Bastrop      74171                             24
+## 13         Baylor       3726                              5
+## 14            Bee      31861                              7
+## 15           Bell     310235                            277
+## 16          Bexar    1714773                           1405
+## 17         Blanco      10497                              4
+## 18         Borden        641                              0
+## 19         Bosque      18212                              9
+## 20          Bowie      92565                             65
+## 21       Brazoria     313166                            225
+## 22         Brazos     194851                            189
+## 23       Brewster       9232                              6
+## 24        Briscoe       1637                              1
+## 25         Brooks       7223                             NA
+## 26          Brown      38106                             20
+## 27       Burleson      17187                              8
+## 28         Burnet      42750                             22
+## 29       Caldwell      38066                             12
+## 30        Calhoun      21381                             13
+## 31       Callahan      13544                              1
+## 32        Cameron     406220                            200
+## 33           Camp      12401                              9
+##  [ reached getOption(&quot;max.print&quot;) -- omitted 222 rows ]</code></pre>
+<pre class="r"><code>county_health &lt;- full_join(by = &quot;County&quot;, dataset1, dataset2)
+
+county_health &lt;- county_health %&gt;% na.omit()
+glimpse(county_health)</code></pre>
+<pre><code>## Observations: 236
+## Variables: 8
+## $ State.x                         &lt;fct&gt; Texas, Texas, Texas, Texas, Texas, Te…
+## $ County                          &lt;fct&gt; , Anderson, Andrews, Angelina, Aransa…
+## $ Percent.With.Access.to.Exercise &lt;int&gt; 80, 29, 94, 65, 81, 3, 39, 62, 84, 62…
+## $ Percent.Excessive.Drinking      &lt;int&gt; 19, 19, 21, 18, 16, 20, 18, 18, 16, 1…
+## $ Percent.of.Adult.Smokers        &lt;int&gt; 14, 18, 13, 18, 16, 13, 14, 14, 18, 1…
+## $ State.y                         &lt;fct&gt; Texas, Texas, Texas, Texas, Texas, Te…
+## $ Number_Primary_Care_Physicians  &lt;int&gt; 16815, 20, 7, 52, 13, 0, 8, 6, 3, 6, …
+## $ Population                      &lt;int&gt; 25145561, 58458, 14786, 86771, 23158,…</code></pre>
+<p>My dataset was already tidy, because my data had only one point of reference for every county in the state. Pivot wider/longer is used when you want to gather data under one name, but I already had my data set for each and every specific county so there was nothing to combine. I used a full_join because both of my data sets contained each county, and it just made sense to completely join all of the data’s information by the counties themselves. In this case I also used select in dataset2 in order to leave out category like the state which was information that I did not need. I then used na.omit, in order to clean of my data and get rif of any rows that would have an NA. This was crucial to do, so that I could analyze the information that I had, because I needed all my data to have numerical values that could then be mutated to categorical ones.</p>
+<pre class="r"><code>county_health %&gt;% filter(County == &quot;Travis&quot;) %&gt;% select(-Number_Primary_Care_Physicians) %&gt;% 
+    glimpse()</code></pre>
+<pre><code>## Observations: 1
+## Variables: 7
+## $ State.x                         &lt;fct&gt; Texas
+## $ County                          &lt;fct&gt; Travis
+## $ Percent.With.Access.to.Exercise &lt;int&gt; 92
+## $ Percent.Excessive.Drinking      &lt;int&gt; 23
+## $ Percent.of.Adult.Smokers        &lt;int&gt; 13
+## $ State.y                         &lt;fct&gt; Texas
+## $ Population                      &lt;int&gt; 1024266</code></pre>
+<pre class="r"><code>county_health %&gt;% filter(County == &quot;Fort Bend&quot;) %&gt;% select(-Number_Primary_Care_Physicians) %&gt;% 
+    glimpse()</code></pre>
+<pre><code>## Observations: 1
+## Variables: 7
+## $ State.x                         &lt;fct&gt; Texas
+## $ County                          &lt;fct&gt; Fort Bend
+## $ Percent.With.Access.to.Exercise &lt;int&gt; 92
+## $ Percent.Excessive.Drinking      &lt;int&gt; 18
+## $ Percent.of.Adult.Smokers        &lt;int&gt; 12
+## $ State.y                         &lt;fct&gt; Texas
+## $ Population                      &lt;int&gt; 585375</code></pre>
+<pre class="r"><code>lifestyle_ratio &lt;- county_health %&gt;% group_by(County) %&gt;% mutate(lifestyle_ratio = Percent.of.Adult.Smokers * 
+    Percent.Excessive.Drinking) %&gt;% arrange(lifestyle_ratio) %&gt;% 
+    glimpse()</code></pre>
+<pre><code>## Observations: 236
+## Variables: 9
+## Groups: County [236]
+## $ State.x                         &lt;fct&gt; Texas, Texas, Texas, Texas, Texas, Te…
+## $ County                          &lt;fct&gt; Menard, Edwards, Gillespie, Presidio,…
+## $ Percent.With.Access.to.Exercise &lt;int&gt; 77, 4, 73, 82, 53, 48, 92, 57, 41, 43…
+## $ Percent.Excessive.Drinking      &lt;int&gt; 15, 16, 16, 13, 14, 14, 18, 17, 17, 1…
+## $ Percent.of.Adult.Smokers        &lt;int&gt; 13, 13, 13, 16, 15, 15, 12, 13, 13, 1…
+## $ State.y                         &lt;fct&gt; Texas, Texas, Texas, Texas, Texas, Te…
+## $ Number_Primary_Care_Physicians  &lt;int&gt; 1, 0, 30, 3, 385, 1, 627, 9, 0, 0, 0,…
+## $ Population                      &lt;int&gt; 2242, 2002, 24837, 7818, 774769, 2342…
+## $ lifestyle_ratio                 &lt;int&gt; 195, 208, 208, 208, 210, 210, 216, 22…</code></pre>
+<pre class="r"><code>summary_data2 &lt;- county_health %&gt;% summarize(n()) %&gt;% glimpse()</code></pre>
+<pre><code>## Observations: 1
+## Variables: 1
+## $ `n()` &lt;int&gt; 236</code></pre>
+<pre class="r"><code>summary_data1 &lt;- county_health %&gt;% summarize_at(3:5, .funs = list(mean, 
+    sd, var, max, min, n_distinct, length)) %&gt;% glimpse()</code></pre>
+<pre><code>## Observations: 1
+## Variables: 21
+## $ Percent.With.Access.to.Exercise_fn1 &lt;dbl&gt; 57.52542
+## $ Percent.Excessive.Drinking_fn1      &lt;dbl&gt; 17.94068
+## $ Percent.of.Adult.Smokers_fn1        &lt;dbl&gt; 15.61441
+## $ Percent.With.Access.to.Exercise_fn2 &lt;dbl&gt; 23.49113
+## $ Percent.Excessive.Drinking_fn2      &lt;dbl&gt; 1.790245
+## $ Percent.of.Adult.Smokers_fn2        &lt;dbl&gt; 1.655309
+## $ Percent.With.Access.to.Exercise_fn3 &lt;dbl&gt; 551.8334
+## $ Percent.Excessive.Drinking_fn3      &lt;dbl&gt; 3.204977
+## $ Percent.of.Adult.Smokers_fn3        &lt;dbl&gt; 2.740047
+## $ Percent.With.Access.to.Exercise_fn4 &lt;int&gt; 98
+## $ Percent.Excessive.Drinking_fn4      &lt;int&gt; 23
+## $ Percent.of.Adult.Smokers_fn4        &lt;int&gt; 20
+## $ Percent.With.Access.to.Exercise_fn5 &lt;int&gt; 0
+## $ Percent.Excessive.Drinking_fn5      &lt;int&gt; 13
+## $ Percent.of.Adult.Smokers_fn5        &lt;int&gt; 11
+## $ Percent.With.Access.to.Exercise_fn6 &lt;int&gt; 83
+## $ Percent.Excessive.Drinking_fn6      &lt;int&gt; 11
+## $ Percent.of.Adult.Smokers_fn6        &lt;int&gt; 10
+## $ Percent.With.Access.to.Exercise_fn7 &lt;int&gt; 236
+## $ Percent.Excessive.Drinking_fn7      &lt;int&gt; 236
+## $ Percent.of.Adult.Smokers_fn7        &lt;int&gt; 236</code></pre>
+<pre class="r"><code>summary_data3 &lt;- county_health %&gt;% summarize_at(3:5, .funs = list(mean, 
+    sd, var, max, min, n_distinct, length)) %&gt;% summarize_if(is.numeric, 
+    list(Q3 = quantile), probs = 0.75, na.rm = T) %&gt;% glimpse()</code></pre>
+<pre><code>## Observations: 1
+## Variables: 21
+## $ Percent.With.Access.to.Exercise_fn1_Q3 &lt;dbl&gt; 57.52542
+## $ Percent.Excessive.Drinking_fn1_Q3      &lt;dbl&gt; 17.94068
+## $ Percent.of.Adult.Smokers_fn1_Q3        &lt;dbl&gt; 15.61441
+## $ Percent.With.Access.to.Exercise_fn2_Q3 &lt;dbl&gt; 23.49113
+## $ Percent.Excessive.Drinking_fn2_Q3      &lt;dbl&gt; 1.790245
+## $ Percent.of.Adult.Smokers_fn2_Q3        &lt;dbl&gt; 1.655309
+## $ Percent.With.Access.to.Exercise_fn3_Q3 &lt;dbl&gt; 551.8334
+## $ Percent.Excessive.Drinking_fn3_Q3      &lt;dbl&gt; 3.204977
+## $ Percent.of.Adult.Smokers_fn3_Q3        &lt;dbl&gt; 2.740047
+## $ Percent.With.Access.to.Exercise_fn4_Q3 &lt;dbl&gt; 98
+## $ Percent.Excessive.Drinking_fn4_Q3      &lt;dbl&gt; 23
+## $ Percent.of.Adult.Smokers_fn4_Q3        &lt;dbl&gt; 20
+## $ Percent.With.Access.to.Exercise_fn5_Q3 &lt;dbl&gt; 0
+## $ Percent.Excessive.Drinking_fn5_Q3      &lt;dbl&gt; 13
+## $ Percent.of.Adult.Smokers_fn5_Q3        &lt;dbl&gt; 11
+## $ Percent.With.Access.to.Exercise_fn6_Q3 &lt;dbl&gt; 83
+## $ Percent.Excessive.Drinking_fn6_Q3      &lt;dbl&gt; 11
+## $ Percent.of.Adult.Smokers_fn6_Q3        &lt;dbl&gt; 10
+## $ Percent.With.Access.to.Exercise_fn7_Q3 &lt;dbl&gt; 236
+## $ Percent.Excessive.Drinking_fn7_Q3      &lt;dbl&gt; 236
+## $ Percent.of.Adult.Smokers_fn7_Q3        &lt;dbl&gt; 236</code></pre>
+<pre class="r"><code>tidy.stats &lt;- summary_data1 %&gt;% pivot_longer(contains(&quot;_&quot;), names_to = &quot;variable&quot;, 
+    values_to = &quot;values&quot;) %&gt;% separate(variable, c(&quot;variable&quot;, 
+    &quot;function&quot;), sep = &quot;_&quot;) %&gt;% pivot_wider(names_from = &quot;function&quot;, 
+    values_from = &quot;values&quot;) %&gt;% glimpse</code></pre>
+<pre><code>## Observations: 3
+## Variables: 8
+## $ variable &lt;chr&gt; &quot;Percent.With.Access.to.Exercise&quot;, &quot;Percent.Excessive.Drinki…
+## $ fn1      &lt;dbl&gt; 57.52542, 17.94068, 15.61441
+## $ fn2      &lt;dbl&gt; 23.491134, 1.790245, 1.655309
+## $ fn3      &lt;dbl&gt; 551.833393, 3.204977, 2.740047
+## $ fn4      &lt;dbl&gt; 98, 23, 20
+## $ fn5      &lt;dbl&gt; 0, 13, 11
+## $ fn6      &lt;dbl&gt; 83, 11, 10
+## $ fn7      &lt;dbl&gt; 236, 236, 236</code></pre>
+<pre class="r"><code>new_category &lt;- county_health %&gt;% mutate(county_size = case_when(Population &lt; 
+    &quot;50000&quot; ~ &quot;high&quot;, &quot;49999&quot; &lt; Population &amp; Population &lt; &quot;5000&quot; ~ 
+    &quot;med&quot;, Population &gt; &quot;5000&quot; ~ &quot;low&quot;))
+
+
+stats.grouped &lt;- new_category %&gt;% group_by(county_size) %&gt;% summarize_at(3:5, 
+    .funs = list(mean, sd, var, max, min, n_distinct)) %&gt;% glimpse()</code></pre>
+<pre><code>## Observations: 2
+## Variables: 19
+## $ county_size                         &lt;chr&gt; &quot;high&quot;, &quot;low&quot;
+## $ Percent.With.Access.to.Exercise_fn1 &lt;dbl&gt; 57.87861, 56.55556
+## $ Percent.Excessive.Drinking_fn1      &lt;dbl&gt; 17.93064, 17.96825
+## $ Percent.of.Adult.Smokers_fn1        &lt;dbl&gt; 15.50867, 15.90476
+## $ Percent.With.Access.to.Exercise_fn2 &lt;dbl&gt; 23.51527, 23.58566
+## $ Percent.Excessive.Drinking_fn2      &lt;dbl&gt; 1.689860, 2.055428
+## $ Percent.of.Adult.Smokers_fn2        &lt;dbl&gt; 1.572357, 1.846656
+## $ Percent.With.Access.to.Exercise_fn3 &lt;dbl&gt; 552.9677, 556.2832
+## $ Percent.Excessive.Drinking_fn3      &lt;dbl&gt; 2.855626, 4.224782
+## $ Percent.of.Adult.Smokers_fn3        &lt;dbl&gt; 2.472308, 3.410138
+## $ Percent.With.Access.to.Exercise_fn4 &lt;int&gt; 96, 98
+## $ Percent.Excessive.Drinking_fn4      &lt;int&gt; 23, 22
+## $ Percent.of.Adult.Smokers_fn4        &lt;int&gt; 20, 20
+## $ Percent.With.Access.to.Exercise_fn5 &lt;int&gt; 0, 0
+## $ Percent.Excessive.Drinking_fn5      &lt;int&gt; 14, 13
+## $ Percent.of.Adult.Smokers_fn5        &lt;int&gt; 12, 11
+## $ Percent.With.Access.to.Exercise_fn6 &lt;int&gt; 75, 44
+## $ Percent.Excessive.Drinking_fn6      &lt;int&gt; 10, 10
+## $ Percent.of.Adult.Smokers_fn6        &lt;int&gt; 9, 10</code></pre>
+<pre class="r"><code>numeric &lt;- county_health %&gt;% select(-County, -State.x, -State.y)
+mydata.cor = cor(numeric) %&gt;% glimpse()</code></pre>
+<pre><code>##  num [1:5, 1:5] 1 0.1247 -0.0995 0.1327 0.1219 ...
+##  - attr(*, &quot;dimnames&quot;)=List of 2
+##   ..$ : chr [1:5] &quot;Percent.With.Access.to.Exercise&quot; &quot;Percent.Excessive.Drinking&quot; &quot;Percent.of.Adult.Smokers&quot; &quot;Number_Primary_Care_Physicians&quot; ...
+##   ..$ : chr [1:5] &quot;Percent.With.Access.to.Exercise&quot; &quot;Percent.Excessive.Drinking&quot; &quot;Percent.of.Adult.Smokers&quot; &quot;Number_Primary_Care_Physicians&quot; ...</code></pre>
+<p>The first observation I did was looking at two different counties. The first was Travis, and I found that 23% of the people are excessive drinkers and 92% have access to excersise. I then wanted to compare this to my county back home, Fort Bend. In my county, we also had 92% access to excersise, but a lower percent of excessive drinking which is 18%. This might be due to my county being more of a suburbs, while Travis is more city-like.</p>
+<p>I then came up with a new variable through a mutation called lifestyle ratio. This is a made up ratio that multiples the percentage of excessive drinking and smokers. I arranged them from lowest to highest. The county with the lowest ratio is Menard, and the one with the highest is Orange. This is not what I was expecting, because Orange County is by Beamont a more populated area of Texas (oil!) while Menard County is in West Texas which has a smaller population and would have less access to fitness centers and development. However, Menard Texas could have some cultural factors that would make it be the helathiest county in the State.</p>
+<p>I used the different summary functions to analyze the data, I grouped the data by county which helped to better understand certain summarize values such as looking at the minimum and maximum. There is a lot of data to talk about, but the ones that I found interesting included looking at the means of the doctors that are found per county. A lot of the smaller counties actually have means of 0, which I thought was problamatic and very troubling. I also did a pivot longer/wider that helped to consolidate my data from 2 rows into 3 rows this time set by the different variables themselves such as all the percentages. This helps to visualize the summary statistics a different way.</p>
+<pre class="r"><code>library(dplyr)
+library(tidyverse)
+df &lt;- new_category %&gt;% select_if(is.numeric)
+cor(df)</code></pre>
+<pre><code>##                                 Percent.With.Access.to.Exercise
+## Percent.With.Access.to.Exercise                      1.00000000
+## Percent.Excessive.Drinking                           0.12469582
+## Percent.of.Adult.Smokers                            -0.09949519
+## Number_Primary_Care_Physicians                       0.13267150
+## Population                                           0.12191378
+##                                 Percent.Excessive.Drinking
+## Percent.With.Access.to.Exercise                 0.12469582
+## Percent.Excessive.Drinking                      1.00000000
+## Percent.of.Adult.Smokers                       -0.32222578
+## Number_Primary_Care_Physicians                  0.06330602
+## Population                                      0.05527606
+##                                 Percent.of.Adult.Smokers
+## Percent.With.Access.to.Exercise              -0.09949519
+## Percent.Excessive.Drinking                   -0.32222578
+## Percent.of.Adult.Smokers                      1.00000000
+## Number_Primary_Care_Physicians               -0.11108551
+## Population                                   -0.10258539
+##                                 Number_Primary_Care_Physicians  Population
+## Percent.With.Access.to.Exercise                     0.13267150  0.12191378
+## Percent.Excessive.Drinking                          0.06330602  0.05527606
+## Percent.of.Adult.Smokers                           -0.11108551 -0.10258539
+## Number_Primary_Care_Physicians                      1.00000000  0.99852163
+## Population                                          0.99852163  1.00000000</code></pre>
+<pre class="r"><code>tidycor &lt;- cor(df) %&gt;% as.data.frame %&gt;% rownames_to_column %&gt;% 
+    pivot_longer(-1, names_to = &quot;name&quot;, values_to = &quot;correlation&quot;)
+head(tidycor)</code></pre>
+<pre><code>## # A tibble: 6 x 3
+##   rowname                         name                            correlation
+##   &lt;chr&gt;                           &lt;chr&gt;                                 &lt;dbl&gt;
+## 1 Percent.With.Access.to.Exercise Percent.With.Access.to.Exercise      1     
+## 2 Percent.With.Access.to.Exercise Percent.Excessive.Drinking           0.125 
+## 3 Percent.With.Access.to.Exercise Percent.of.Adult.Smokers            -0.0995
+## 4 Percent.With.Access.to.Exercise Number_Primary_Care_Physicians       0.133 
+## 5 Percent.With.Access.to.Exercise Population                           0.122 
+## 6 Percent.Excessive.Drinking      Percent.With.Access.to.Exercise      0.125</code></pre>
+<pre class="r"><code>tidycor %&gt;% ggplot(aes(rowname, name, fill = correlation)) + 
+    geom_tile() + scale_fill_gradient2(low = &quot;red&quot;, mid = &quot;white&quot;, 
+    high = &quot;blue&quot;) + geom_text(aes(label = round(correlation, 
+    2)), color = &quot;black&quot;, size = 4) + theme(axis.text.x = element_text(angle = 90, 
+    hjust = 1)) + coord_fixed() + ggtitle(&quot;Correlation Heat Map&quot;)</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(data = new_category, aes(x = Percent.With.Access.to.Exercise, 
+    y = Percent.Excessive.Drinking, color = county_size)) + geom_point(size = 4) + 
+    theme_minimal() + geom_smooth(method = &quot;lm&quot;) + ggtitle(&quot;Excessive Drinking vs Access to Excersise vs County Size&quot;) + 
+    scale_x_continuous(breaks = seq(0, 100, 10))</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>new_category %&gt;% group_by(county_size) %&gt;% summarize(mean(Number_Primary_Care_Physicians, 
+    na.rm = T))</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   county_size `mean(Number_Primary_Care_Physicians, na.rm = T)`
+##   &lt;chr&gt;                                                   &lt;dbl&gt;
+## 1 high                                                    176. 
+## 2 low                                                      51.9</code></pre>
+<pre class="r"><code>ggplot(new_category, aes(county_size, fill = county_size)) + 
+    geom_bar(aes(y = Number_Primary_Care_Physicians), stat = &quot;summary&quot;, 
+        fun.y = &quot;mean&quot;) + scale_y_continuous() + geom_errorbar(aes(y = Number_Primary_Care_Physicians), 
+    stat = &quot;summary&quot;, width = 0.5) + ylab(&quot;Number of Primary Care Physicians&quot;) + 
+    ggtitle(&quot;County Size vs Number of Primary Care Physicians&quot;) + 
+    scale_fill_brewer(palette = &quot;Set1&quot;) + scale_y_log10()</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>**The first graph I have is a correlation heat map. This correlation heat map lets us see the correlation between each of our variables in pairs. The most apparant correlation is between the population and number of primary care physicians. Since they have a positive correlation of one, the strongest, this means that if one increases the other does as well. This fits my prediction from the beginning which stated that bigger counties will have more access to physicians and this could imply access to healthcare. We also have some negative correlations, but the most intresting to me was percent of smokers and excessive drinking. It is interesting that this is a relatively strong correlation of -0.32.This would seem to mean that they are negatively corrolated, and as one increases the other decreases. This seems counterintutive to me, because I would think those two lifestyle choices would be similar. The rest of my variables are not that strongly corrolated. However, I think it would be fair to note that an increase in number of physicians and population leads to a decrease in smoking. This would be seen from the slight negative corrolation.</p>
+<p>**The second graph I have is a scatterplot, that uses the following three variables: Percent with Access to Excersise, Percent with Excessive Drinking, and County Size. There are some slight correlations between them but I think the most intresting one to me is the relationship between medium county size and the other two variables. For high/low county size, there is a negative correlation, which would imply that larger county sizes have more access to excersise but less excessive drinking. This is what I expected but for medium counties there is a positive correlation. This means that in this counties people who excersise more are also drinking more. This seems counter intuitive to me, so there may be other factors involved in some counties that are driving this trend. There are some outliers within the low and high county size that could also be affecting the way that the trend line is, and the perceived relationship between the factors.</p>
+<p>**My third and final graph is a bar plot. Here we can see the discrepancies between the number of primary healthcare physicians and the size of some counties. The error bars, are also very small for the high counties which would suggest that they are all similar in terms of number of physicians. The low and middle counties are much closer to each other than they are to the high. It is important to note that I took the base log 10 of this graph so that we could see the values for the low and middle counties. When I first made the graph, we were only able to see values for the high counties. This makes the difference between the counties even more apparent, when you think that the y-axis is set to the log function. I think the biggest outtake from this graph is that county size really does affect the number of physicians present.</p>
+<pre class="r"><code>full.data1 &lt;- new_category %&gt;% select(county_size, Population, 
+    Percent.With.Access.to.Exercise, Percent.of.Adult.Smokers, 
+    Percent.Excessive.Drinking)
+dat_nums &lt;- full.data1 %&gt;% select_if(is.numeric) %&gt;% scale
+pca &lt;- princomp(dat_nums)
+names(pca)</code></pre>
+<pre><code>## [1] &quot;sdev&quot;     &quot;loadings&quot; &quot;center&quot;   &quot;scale&quot;    &quot;n.obs&quot;    &quot;scores&quot;   &quot;call&quot;</code></pre>
+<pre class="r"><code>summary(pca, loadings = T)</code></pre>
+<pre><code>## Importance of components:
+##                           Comp.1    Comp.2    Comp.3    Comp.4
+## Standard deviation     1.1971291 1.0024690 0.9363137 0.8174994
+## Proportion of Variance 0.3598041 0.2523051 0.2201035 0.1677873
+## Cumulative Proportion  0.3598041 0.6121092 0.8322127 1.0000000
+## 
+## Loadings:
+##                                 Comp.1 Comp.2 Comp.3 Comp.4
+## Population                      -0.329  0.700 -0.618  0.139
+## Percent.With.Access.to.Exercise -0.400  0.503  0.759 -0.106
+## Percent.of.Adult.Smokers         0.609  0.326  0.201  0.695
+## Percent.Excessive.Drinking      -0.601 -0.388         0.698</code></pre>
+<pre class="r"><code>eigval &lt;- pca$sdev^2
+varprop = round(eigval/sum(eigval), 2)
+
+ggplot() + geom_bar(aes(y = varprop, x = 1:4), stat = &quot;identity&quot;) + 
+    xlab(&quot;&quot;) + geom_path(aes(y = varprop, x = 1:4)) + geom_text(aes(x = 1:4, 
+    y = varprop, label = round(varprop, 3)), vjust = 1, col = &quot;white&quot;, 
+    size = 4) + scale_y_continuous(breaks = seq(0, 0.8, 0.2), 
+    labels = scales::percent) + scale_x_continuous(breaks = 1:4)</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>eigen(cor(dat_nums))</code></pre>
+<pre><code>## eigen() decomposition
+## $values
+## [1] 1.4392166 1.0092204 0.8804140 0.6711491
+## 
+## $vectors
+##            [,1]       [,2]       [,3]       [,4]
+## [1,] -0.3288114 -0.7004452 -0.6180805  0.1386944
+## [2,] -0.3998579 -0.5029295  0.7589458 -0.1057206
+## [3,]  0.6085652 -0.3258740  0.2014785  0.6948820
+## [4,] -0.6013694  0.3876139  0.0372055  0.6976576</code></pre>
+<pre class="r"><code>datadf &lt;- data.frame(PC1 = pca$scores[, 1], PC2 = pca$scores[, 
+    2])
+ggplot(datadf, aes(PC1, PC2)) + geom_point()</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>County_Size &lt;- full.data1$county_size
+pca$scores %&gt;% as.data.frame %&gt;% cbind(County_Size, .) %&gt;% top_n(3, 
+    Comp.1)  #highest PC1</code></pre>
+<pre><code>##   County_Size   Comp.1    Comp.2     Comp.3    Comp.4
+## 1         low 3.104361 1.4698484  0.2843299 0.3222609
+## 2         low 3.417515 1.0849211 -0.3487981 0.4120959
+## 3        high 3.038181 0.9163491 -0.2167220 0.7850694</code></pre>
+<pre class="r"><code>pca$scores %&gt;% as.data.frame %&gt;% cbind(County_Size, .) %&gt;% top_n(3, 
+    wt = desc(Comp.1))  #lowest PC1</code></pre>
+<pre><code>##   County_Size    Comp.1     Comp.2     Comp.3    Comp.4
+## 1        high -6.240204 10.3897706 -8.6746802 1.7042982
+## 2        high -3.407186 -0.5318297  0.6005308 0.7863246
+## 3        high -2.901776 -0.6318268  0.7054430 0.3601721</code></pre>
+<pre class="r"><code>pca$scores %&gt;% as.data.frame %&gt;% cbind(County_Size, .) %&gt;% top_n(3, 
+    Comp.2)  #highest PC2</code></pre>
+<pre><code>##   County_Size     Comp.1    Comp.2     Comp.3     Comp.4
+## 1        high -6.2402042 10.389771 -8.6746802  1.7042982
+## 2        high -0.9890542  1.810198  0.3511995 -0.6187023
+## 3        high -2.2975821  1.794612 -0.7033838 -0.8983965</code></pre>
+<pre class="r"><code>pca$scores %&gt;% as.data.frame %&gt;% cbind(County_Size, .) %&gt;% top_n(3, 
+    wt = desc(Comp.2))  #lowest PC2</code></pre>
+<pre><code>##   County_Size     Comp.1    Comp.2    Comp.3     Comp.4
+## 1         low -1.7031405 -2.891462 -2.277987 -0.5036127
+## 2        high -0.6003221 -2.300619 -1.913054  0.7558058
+## 3         low -0.6359751 -2.254371 -1.851464  0.7474839</code></pre>
+<pre class="r"><code>pca$loadings[1:4, 1:2] %&gt;% as.data.frame %&gt;% rownames_to_column %&gt;% 
+    ggplot() + geom_hline(aes(yintercept = 0), lty = 2) + geom_vline(aes(xintercept = 0), 
+    lty = 2) + ylab(&quot;PC2&quot;) + xlab(&quot;PC1&quot;) + geom_segment(aes(x = 0, 
+    y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(), col = &quot;red&quot;) + 
+    geom_label(aes(x = Comp.1 * 1.1, y = Comp.2 * 1.1, label = rowname))</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /> Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+<p>For my dimentionality reduction, I chose to do a PCA. This means that I wa slooking for my spread out data through variance and reducing it so that I could clearly see where my data clustered in differences. This means that my information is kept, but the data is not related anymore. I grabbed all of my numerical values, and then normalized my data to the mean with scale. I ran a princomp, and I got 4 principle components, where the first had 35.98% of variance, and the second had 25.23% of variance.I decided to keep 2 principle components because their eigenvalues were greater than one. I didn’t do the 80% from the scree plot, because I felt like 3 of the variables had too similar values to be able to pick. I felt like the first two principlar components captured enough variation that I was interested in. From my plot I can tell that the higher on PC1, the higher I will be in Percent of Adult Smokers, but the Percent Excessive Drinking will be much smaller. In PC2, the higher we move up, the higher our Population will be. This is what we can see from our summary loading visually in our plot. From my scatterplot, I can also conclude that there is more variance towards PC1, because it is more spread out. For PC2, there is not as much variance (due to Population) because all points are clustered around 0. There is a outlier however in the top left, which I think may be the data from the entire state of Texas that I never removed from my datasets. For both PC1 and PC2, a high number means that there is a positive correlation, and vice versa. This makes sense, because the lowest for my PC2 is a low population county size, and the highest is a high population county size.</p>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../js/docs.min.js"></script>
+<script src="../js/main.js"></script>
+
+<script src="../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

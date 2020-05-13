@@ -1,0 +1,154 @@
+---
+title: "Project 1"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
+tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
+```
+
+###Bibiana Toro, bmt897
+
+
+## R Markdown
+
+  The two datasets that I have chosen include healthcare statistics for each county in the state of Texas. Data set 1 includes counties with different lifestyle choices such as percentage of people who drink, smoke, and their access to excersise in each county. Data set 2, then includes an overview of what is found in each county. For example, this data set includes the number of primary physicians per county as well as the population in each county. They were aquired by looking at the texas Department of Health for their latest information collected.
+  
+  This data was interesting to me, because healthcare disparities and access to healthcare are some topics that are close to me. I have lived in areas that were completely different in terms of healthcare, and it really makes a difference to the lifestyle that people have. I expect to see a big difference of the number of physicians there are in smaller populated cities. I also then expect to see higher rates of smoking and drinking. Due to smaller population sizes, I also expect to see some corrolation with access to excersise. Texas is such a huge state, but resources are not evely dirstriubted throughout. Therefore, I expect to see relationships between almost all my variables. I expect to see this, because I it has been researched before how number of physicians vary depending on size of town, and the size of town will affect what kinds of lifestyles are available to people. 
+
+```{r}
+library(dplyr)
+library(tidyverse)
+
+library(fivethirtyeight)
+
+
+
+library(reshape2)
+library(ggplot2)
+
+dataset1<-read.csv("dataset1.csv")
+dataset2<-read.csv("dataset2.csv")
+
+
+dataset2%>%select(County, Population, Number_Primary_Care_Physicians)
+county_health<-full_join(by="County", dataset1, dataset2)
+
+county_health<-county_health%>%na.omit()
+glimpse(county_health)
+
+
+```
+  My dataset was already tidy, because my data had only one point of reference for every county in the state. Pivot wider/longer is used when you want to gather data under one name, but I already had my data set for each and every specific county so there was nothing to combine. I used a full_join because both of my data sets contained each county, and it just made sense to completely join all of the data's information by the counties themselves. In this case I also used select in dataset2 in order to leave out category like the state which was information that I did not need. I then used na.omit, in order to clean of my data and get rif of any rows that would have an NA. This was crucial to do, so that I could analyze the information that I had, because I needed all my data to have numerical values that could then be mutated to categorical ones. 
+
+```{r}
+county_health%>%filter(County=="Travis")%>%select(-Number_Primary_Care_Physicians)%>%glimpse()
+county_health%>%filter(County=="Fort Bend")%>%select(-Number_Primary_Care_Physicians)%>%glimpse()
+
+lifestyle_ratio<-county_health%>%group_by(County)%>%mutate(lifestyle_ratio= Percent.of.Adult.Smokers*Percent.Excessive.Drinking)%>%arrange(lifestyle_ratio)%>%glimpse() 
+
+summary_data2<- county_health%>%summarize(n())%>%glimpse()
+
+summary_data1<-county_health%>%summarize_at(3:5, .funs=list(mean,sd,var,max,min,n_distinct, length))%>%glimpse()
+
+summary_data3<-county_health%>%summarize_at(3:5, .funs=list(mean,sd,var,max,min,n_distinct, length))%>%summarize_if(is.numeric, list(Q3=quantile), probs=.75, na.rm=T)%>%glimpse()
+
+tidy.stats<-summary_data1%>%pivot_longer(contains("_"), names_to="variable", values_to = "values")%>%separate(variable, c("variable", "function"), sep="_")%>%pivot_wider(names_from = "function", values_from = "values")%>%glimpse
+
+
+
+new_category<- county_health %>%mutate(county_size = case_when(Population<"50000" ~ "high", "49999"<Population & Population<"5000" ~ "med", Population>"5000" ~ "low")) 
+
+
+stats.grouped<-new_category%>%group_by(county_size)%>%summarize_at(3:5, .funs=list(mean,sd,var,max,min,n_distinct))%>%glimpse()
+
+
+numeric<-county_health%>%select(-County, -State.x, -State.y)
+mydata.cor = cor(numeric)%>%glimpse()
+
+
+```
+
+  The first observation I did was looking at two different counties. The first was Travis, and I found that 23% of the people are excessive drinkers and 92% have access to excersise. I then wanted to compare this to my county back home, Fort Bend. In my county, we also had 92% access to excersise, but a lower percent of excessive drinking which is 18%. This might be due to my county being more of a suburbs, while Travis is more city-like. 
+  
+  I then came up with a new variable  through a mutation called lifestyle ratio. This is a made up ratio that multiples the percentage of excessive drinking and smokers. I arranged them from lowest to highest. The county with the lowest ratio is Menard, and the one with the highest is Orange. This is not what I was expecting, because Orange County is by Beamont a more populated area of Texas (oil!) while Menard County is in West Texas which has a smaller population and would have less access to fitness centers and development. However, Menard Texas could have some cultural factors that would make it be the helathiest county in the State. 
+    
+   I used the different summary functions to analyze the data, I grouped the data by county which helped to better understand certain summarize values such as looking at the minimum and maximum. There is a lot of data to talk about, but the ones that I found interesting included looking at the means of the doctors that are found per county. A lot of the smaller counties actually have means of 0, which I thought was problamatic and very troubling. I also did a pivot longer/wider that helped to consolidate my data from 2 rows into 3 rows this time set by the different variables themselves such as all the percentages. This helps to visualize the summary statistics a different way. 
+   
+   
+    
+
+```{r}
+library(dplyr)
+library(tidyverse)
+df<-new_category%>%select_if(is.numeric)
+cor(df)
+tidycor<-cor(df)%>%as.data.frame%>%
+  rownames_to_column%>%
+  pivot_longer(-1,names_to="name",values_to="correlation")
+head(tidycor)
+tidycor%>%ggplot(aes(rowname,name,fill=correlation))+
+  geom_tile()+
+  scale_fill_gradient2(low="red",mid="white",high="blue")+ 
+  geom_text(aes(label=round(correlation,2)),color = "black", size = 4)+ 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+ 
+  coord_fixed()+ggtitle("Correlation Heat Map")
+```
+
+
+```{r}
+ggplot(data = new_category, aes(x =Percent.With.Access.to.Exercise, y =Percent.Excessive.Drinking, color = county_size)) +
+  geom_point(size=4)+theme_minimal()+geom_smooth(method="lm")+ggtitle("Excessive Drinking vs Access to Excersise vs County Size")+scale_x_continuous(breaks=seq(0, 100, 10))
+
+```
+
+
+```{r}
+new_category%>%group_by(county_size)%>%summarize(mean(Number_Primary_Care_Physicians,na.rm=T))   
+
+ggplot(new_category, aes(county_size, fill=county_size))+geom_bar(aes(y=Number_Primary_Care_Physicians), 
+stat = "summary", fun.y= "mean")+scale_y_continuous()+geom_errorbar(aes(y=Number_Primary_Care_Physicians), stat="summary", width=0.5)+
+  ylab("Number of Primary Care Physicians")+
+  ggtitle("County Size vs Number of Primary Care Physicians")+
+  scale_fill_brewer(palette="Set1")+
+  scale_y_log10()
+```
+
+  **The first graph I have is a correlation heat map. This correlation heat map lets us see the correlation between each of our variables in pairs. The most apparant correlation is between the population and number of primary care physicians. Since they have a positive correlation of one, the strongest, this means that if one increases the other does as well. This fits my prediction from the beginning which stated that bigger counties will have more access to physicians and this could imply access to healthcare. We also have some negative correlations, but the most intresting to me was percent of smokers and excessive drinking. It is interesting that this is a relatively strong correlation of -0.32.This would seem to mean that they are negatively corrolated, and as one increases the other decreases. This seems counterintutive to me, because I would think those two lifestyle choices would be similar. The rest of my variables are not that strongly corrolated. However, I think it would be fair to note that an increase in number of physicians and population leads to a decrease in smoking. This would be seen from the slight negative corrolation. 
+  
+   **The second graph I have is a scatterplot, that uses the following three variables: Percent with Access to Excersise, Percent with Excessive Drinking, and County Size. There are some slight correlations between them but I think the most intresting one to me is the relationship between medium county size and the other two variables. For high/low county size, there is a negative correlation, which would imply that larger county sizes have more access to excersise but less excessive drinking. This is what I expected but for medium counties there is a positive correlation. This means that in this counties people who excersise more are also drinking more. This seems counter intuitive to me, so there may be other factors involved in some counties that are driving this trend. There are some outliers within the low and high county size that could also be affecting the way that the trend line is, and the perceived relationship between the factors. 
+   
+   **My third and final graph is a bar plot. Here we can see the discrepancies between the number of primary healthcare physicians and the size of some counties. The error bars, are also very small for the high counties which would suggest that they are all similar in terms of number of physicians. The low and middle counties are much closer to each other than they are to the high. It is important to note that I took the base log 10 of this graph so that we could see the values for the low and middle counties. When I first made the graph, we were only able to see values for the high counties. This makes the difference between the counties even more apparent, when you think that the y-axis is set to the log function. I think the biggest outtake from this graph is that county size really does affect the number of physicians present. 
+
+```{r}
+full.data1<-new_category%>%select(county_size,Population,Percent.With.Access.to.Exercise, Percent.of.Adult.Smokers, Percent.Excessive.Drinking)
+dat_nums<-full.data1%>%select_if(is.numeric)%>%scale
+pca<-princomp(dat_nums)
+names(pca)
+summary(pca, loadings=T)
+eigval<-pca$sdev^2
+varprop=round(eigval/sum(eigval),2)
+
+ggplot()+geom_bar(aes(y=varprop,x=1:4),stat="identity")+xlab("")+geom_path(aes(y=varprop,x=1:4))+geom_text(aes(x=1:4,y=varprop,label=round(varprop,3)),vjust=1,col="white",size=4)+ scale_y_continuous(breaks=seq(0,.8,.2),labels = scales::percent)+ scale_x_continuous(breaks=1:4)
+eigen(cor(dat_nums))
+datadf<-data.frame(PC1=pca$scores[,1],PC2=pca$scores[,2])
+ggplot(datadf,aes(PC1,PC2))+geom_point()
+
+
+County_Size<-full.data1$county_size
+pca$scores%>%as.data.frame%>%cbind(County_Size,.)%>%top_n(3,Comp.1) #highest PC1
+pca$scores%>%as.data.frame%>%cbind(County_Size,.)%>%top_n(3,wt=desc(Comp.1)) #lowest PC1
+pca$scores%>%as.data.frame%>%cbind(County_Size,.)%>%top_n(3,Comp.2) #highest PC2
+pca$scores%>%as.data.frame%>%cbind(County_Size,.)%>%top_n(3,wt=desc(Comp.2)) #lowest PC2
+pca$loadings[1:4,1:2]%>%as.data.frame%>%rownames_to_column%>%ggplot()+geom_hline(aes(yintercept=0),lty=2)+geom_vline(aes(xintercept=0),lty=2)+ylab("PC2")+xlab("PC1")+geom_segment(aes(x=0,y=0,xend=Comp.1,yend=Comp.2),arrow=arrow(),col="red")+geom_label(aes(x=Comp.1*1.1,y=Comp.2*1.1,label=rowname))
+
+```
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+  For my dimentionality reduction, I chose to do a PCA. This means that I wa slooking for my spread out data through variance and reducing it so that I could clearly see where my data clustered in differences. This means that my information is kept, but the data is not related anymore. I grabbed all of my numerical values, and then normalized my data to the mean with scale.  I ran a princomp, and I got 4 principle components, where the first had 35.98% of variance, and the second had 25.23% of variance.I decided to keep 2 principle components because their eigenvalues were greater than one. I didn't do the 80% from the scree plot, because I felt like 3 of the variables had too similar values to be able to pick. I felt like the first two principlar components captured enough variation that I was interested in. From my plot I can tell that the higher on PC1, the higher I will be in Percent of Adult Smokers, but the Percent Excessive Drinking will be much smaller. In PC2, the higher we move up, the higher our Population will be. This is what we can see from our summary loading visually in our plot. From my scatterplot, I can also conclude that there is more variance towards PC1, because it is more spread out. For PC2, there is not as much variance (due to Population) because all points are clustered around 0. There is a outlier however in the top left, which I think may be the data from the entire state of Texas that I never removed from my datasets. For both PC1 and PC2, a high number means that there is a positive correlation, and vice versa. This makes sense, because the lowest for my PC2 is a low population county size, and the highest is a high population county size. 
+    

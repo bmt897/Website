@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Bibiana Toro" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.ico">
+    <title>Project 2</title>
+    <meta name="generator" content="Hugo 0.70.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../blog/">BLOG</a></li>
+        
+        <li><a href="../projects/">PROJECTS</a></li>
+        
+        <li><a href="../resume.docx">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../project2/">Project 2</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<p>Bibiana Toro, bmt897</p>
+<p>My dataset looks at information collected on Covid-19 throughout different counties in Texas. My variables include the counties themselves but also total Covid-19 positive cases and fatalities in each county. It also includes the population numbers for each county included, and whether they are considered Metro or non-Metro. Any county that is part of an MSA is classified as a metro area regardless of its own size. A number of low population counties in Texas are considered metro areas because they are adjacent to larger population cores and share social and economic integration with the core. I also have a variable that includes the county’s urban classification. An urban-rural designation developed by the National Center for Health Statistics.The most recent classification scheme was developed in 2013.I have a total of 198 observations for every variable, on e for every county.</p>
+<p>This data is up to April 20th which is when I downloaded the numbers that the state provides, but they do update weekly. Also something to note is that this are not all the counties in Texas, only the counties that had positive cases of covid-19 as of April 20th. I picked this data because I thought that it would be interesting to look at something that is so relevant right now. I was also curious as how the different counties and there fore cities affect the prevalence of testing and coronavirus.</p>
+<pre class="r"><code>project2dataR &lt;- read.csv(&quot;project2dataR.csv&quot;)
+project2dataR$Cumulative_Total_Test &lt;- gsub(&quot;,&quot;, &quot;&quot;, as.character(project2dataR$Cumulative_Total_Test))
+head(project2dataR$Cumulative_Total_Test, 15)</code></pre>
+<pre><code>##  [1] &quot;78&quot;   &quot;1&quot;    &quot;154&quot;  &quot;15&quot;   &quot;6&quot;    &quot;80&quot;   &quot;125&quot;  &quot;34&quot;   &quot;215&quot;  &quot;84&quot;  
+## [11] &quot;560&quot;  &quot;7892&quot; &quot;103&quot;  &quot;60&quot;   &quot;649&quot;</code></pre>
+<pre class="r"><code>project2dataR$Cumulative_Total_Test &lt;- as.numeric(project2dataR$Cumulative_Total_Test)
+library(ggplot2)
+library(dplyr)
+
+ggplot(project2dataR, aes(x = Positive, y = Cumulative_Total_Test)) + 
+    geom_point(alpha = 0.5) + geom_density_2d(h = 2) + coord_fixed() + 
+    facet_wrap(~NCHS_Urban_Rural_Classification)</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-1-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>covmats &lt;- project2dataR %&gt;% group_by(NCHS_Urban_Rural_Classification) %&gt;% 
+    do(covs = cov(.[2:3]))
+for (i in 1:3) {
+    print(as.character(covmats$NCHS_Urban_Rural_Classification[i]))
+    print(covmats$covs[i])
+}</code></pre>
+<pre><code>## [1] &quot;Large Central Metro&quot;
+## [[1]]
+##              Positive Fatalities
+## Positive   2508057.37 32766.0333
+## Fatalities   32766.03   512.1667
+## 
+## [1] &quot;Large Fringe Metro&quot;
+## [[1]]
+##              Positive Fatalities
+## Positive   39366.0040  933.38360
+## Fatalities   933.3836   26.29101
+## 
+## [1] &quot;Medium Metro&quot;
+## [[1]]
+##              Positive Fatalities
+## Positive   21549.5634  741.23188
+## Fatalities   741.2319   47.01449</code></pre>
+<pre class="r"><code>man1 &lt;- manova(cbind(Positive, Cumulative_Total_Test, Fatalities) ~ 
+    NCHS_Urban_Rural_Classification, data = project2dataR)
+summary(man1)  ####Manova is significant</code></pre>
+<pre><code>##                                  Df Pillai approx F num Df den Df    Pr(&gt;F)    
+## NCHS_Urban_Rural_Classification   5 0.8377   14.877     15    576 &lt; 2.2e-16 ***
+## Residuals                       192                                            
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>summary.aov(man1)</code></pre>
+<pre><code>##  Response Positive :
+##                                  Df   Sum Sq Mean Sq F value    Pr(&gt;F)    
+## NCHS_Urban_Rural_Classification   5 19569203 3913841  52.995 &lt; 2.2e-16 ***
+## Residuals                       192 14179700   73853                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response Cumulative_Total_Test :
+##                                  Df    Sum Sq   Mean Sq F value    Pr(&gt;F)    
+## NCHS_Urban_Rural_Classification   5 584027586 116805517   109.6 &lt; 2.2e-16 ***
+## Residuals                       192 204631404   1065789                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response Fatalities :
+##                                  Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## NCHS_Urban_Rural_Classification   5 9922.9 1984.59  81.688 &lt; 2.2e-16 ***
+## Residuals                       192 4664.6   24.29                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>project2dataR %&gt;% group_by(NCHS_Urban_Rural_Classification) %&gt;% 
+    summarize(mean(Positive), mean(Fatalities), mean(Cumulative_Total_Test))</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   NCHS_Urban_Rural_Clas… `mean(Positive)` `mean(Fatalities… `mean(Cumulative_To…
+##   &lt;fct&gt;                             &lt;dbl&gt;             &lt;dbl&gt;                &lt;dbl&gt;
+## 1 Large Central Metro             1857.              41.8                10156. 
+## 2 Large Fringe Metro               121.               3.07                 693. 
+## 3 Medium Metro                     115.               3.67                 621. 
+## 4 Micropolitan                      19.1              0.714                 97.7
+## 5 Non-core                           5.76             0.103                 32.4
+## 6 Small Metro                       45.8              1.6                  461.</code></pre>
+<pre class="r"><code>pairwise.t.test(project2dataR$Positive, project2dataR$NCHS_Urban_Rural_Classification, 
+    p.adj = &quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  project2dataR$Positive and project2dataR$NCHS_Urban_Rural_Classification 
+## 
+##                    Large Central Metro Large Fringe Metro Medium Metro
+## Large Fringe Metro &lt;2e-16              -                  -           
+## Medium Metro       &lt;2e-16              0.929              -           
+## Micropolitan       &lt;2e-16              0.125              0.172       
+## Non-core           &lt;2e-16              0.055              0.088       
+## Small Metro        &lt;2e-16              0.344              0.405       
+##                    Micropolitan Non-core
+## Large Fringe Metro -            -       
+## Medium Metro       -            -       
+## Micropolitan       -            -       
+## Non-core           0.798        -       
+## Small Metro        0.718        0.557   
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(project2dataR$Cumulative_Total_Test, project2dataR$NCHS_Urban_Rural_Classification, 
+    p.adj = &quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  project2dataR$Cumulative_Total_Test and project2dataR$NCHS_Urban_Rural_Classification 
+## 
+##                    Large Central Metro Large Fringe Metro Medium Metro
+## Large Fringe Metro &lt;2e-16              -                  -           
+## Medium Metro       &lt;2e-16              0.8027             -           
+## Micropolitan       &lt;2e-16              0.0191             0.0489      
+## Non-core           &lt;2e-16              0.0041             0.0154      
+## Small Metro        &lt;2e-16              0.4437             0.6090      
+##                    Micropolitan Non-core
+## Large Fringe Metro -            -       
+## Medium Metro       -            -       
+## Micropolitan       -            -       
+## Non-core           0.7413       -       
+## Small Metro        0.1967       0.0992  
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(project2dataR$Fatalities, project2dataR$NCHS_Urban_Rural_Classification, 
+    p.adj = &quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  project2dataR$Fatalities and project2dataR$NCHS_Urban_Rural_Classification 
+## 
+##                    Large Central Metro Large Fringe Metro Medium Metro
+## Large Fringe Metro &lt;2e-16              -                  -           
+## Medium Metro       &lt;2e-16              0.6647             -           
+## Micropolitan       &lt;2e-16              0.0514             0.0203      
+## Non-core           &lt;2e-16              0.0068             0.0022      
+## Small Metro        &lt;2e-16              0.3092             0.1677      
+##                    Micropolitan Non-core
+## Large Fringe Metro -            -       
+## Medium Metro       -            -       
+## Micropolitan       -            -       
+## Non-core           0.5175       -       
+## Small Metro        0.5091       0.2270  
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>### type I error
+1 - 0.95^3</code></pre>
+<pre><code>## [1] 0.142625</code></pre>
+<p>The assumptions made for Manova are they are random samples and independent observations. I would say that the data set is random because it is data collected throughout all counties with positive cases of Covd-19, and they would be independent because the collection is not based on anything.A one-way MANOVA was conducted to determine the effect of the NCHS_Urban_Rural_Classification on three dependent variables (all numeric-Positive, Fatalities, Cumulative_Total_Test).I tried to analyze the bivariate density plots for each group and I concluded that they revealed no stark deparures from multivariate normality. Examination of the covariance matrices for each group showed relative homogeneity. No univariate or multivariate outliers were evident and MANOVA was considered to be an appropriate analysis technique. Significant difference was found between Positive, Fatalities, Total Cumulative Tests, and the Urban Classification because their p-values were all less than 0.05. Because of this, I went on to perform a an Anova to find the mean differences among the groups. From these differences it was interesting to see the big difference in positive cases between Large Central Metro and Non-Core. These numbers make sense, because you would expect to see bigger means in the largets metros vs the Micro and Non Core. I also perfromed 3 post-hoc tests to see which groups differ. Since we did 3 post-hoc tests, the probabilty of a type one error is 14.2625%. To keep the type one error at 0.5, I divided 0.05/3= 0.01667.(bonferroni correction) Using these boundaries, I found that that all three dependent variables are significantly different when you look at the Large Central compared to other values, and non-core category.</p>
+<pre class="r"><code>library(vegan)
+dists &lt;- project2dataR %&gt;% select(Fatalities, Positive, Cumulative_Total_Test) %&gt;% 
+    dist()
+adonis(dists ~ NCHS_Urban_Rural_Classification, data = project2dataR)</code></pre>
+<pre><code>## 
+## Call:
+## adonis(formula = dists ~ NCHS_Urban_Rural_Classification, data = project2dataR) 
+## 
+## Permutation: free
+## Number of permutations: 999
+## 
+## Terms added sequentially (first to last)
+## 
+##                                  Df SumsOfSqs   MeanSqs F.Model      R2 Pr(&gt;F)
+## NCHS_Urban_Rural_Classification   5 603606712 120721342  105.93 0.73394  0.001
+## Residuals                       192 218815768   1139665         0.26606       
+## Total                           197 822422480                   1.00000       
+##                                    
+## NCHS_Urban_Rural_Classification ***
+## Residuals                          
+## Total                              
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>SST &lt;- sum(dists^2)/150
+SSW &lt;- project2dataR %&gt;% group_by(NCHS_Urban_Rural_Classification) %&gt;% 
+    select(Fatalities, Positive, Cumulative_Total_Test) %&gt;% do(d = dist(.[2:3], 
+    &quot;euclidean&quot;)) %&gt;% ungroup() %&gt;% summarize(sum(d[[1]]^2)/50 + 
+    sum(d[[2]]^2)/50 + sum(d[[3]]^2)/50) %&gt;% pull
+F_obs &lt;- ((SST - SSW)/2)/(SSW/147)  #observed F statistic
+
+
+
+
+# compute null distribution for F
+Fs &lt;- replicate(1000, {
+    new &lt;- project2dataR %&gt;% mutate(NCHS_Urban_Rural_Classification = sample(NCHS_Urban_Rural_Classification))  #permute the species vector
+    SSW &lt;- new %&gt;% group_by(NCHS_Urban_Rural_Classification) %&gt;% 
+        select(Fatalities, Positive, Cumulative_Total_Test) %&gt;% 
+        do(d = dist(.[2:3], &quot;euclidean&quot;)) %&gt;% ungroup() %&gt;% summarize(sum(d[[1]]^2)/50 + 
+        sum(d[[2]]^2)/50 + sum(d[[3]]^2)/50) %&gt;% pull
+    ((SST - SSW)/2)/(SSW/147)  #calculate new F on randomized data
+})
+
+hist(Fs, prob = T)
+abline(v = F_obs, col = &quot;red&quot;)</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-2-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>mean(Fs &gt; F_obs)</code></pre>
+<pre><code>## [1] 0.517</code></pre>
+<p>Our null hypothesis becomes that there is no difference between the group means. When I do a randomization test, I find that the difference in F statistic between non-ranodmized and ranodmized data is 0.54. This p value is small enough to reject the null hypothesis which means that there is a difference between the groups.</p>
+<pre class="r"><code>library(sandwich)
+library(lmtest)
+library(ggplot2)
+project2dataR$Positive_c &lt;- project2dataR$Positive - mean(project2dataR$Positive)
+project2dataR$Fatalities_c &lt;- project2dataR$Fatalities - mean(project2dataR$Fatalities)
+fit &lt;- lm(Positive_c ~ Metro_vs_Non_Metro + Fatalities_c, data = project2dataR)
+summary(fit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Positive_c ~ Metro_vs_Non_Metro + Fatalities_c, 
+##     data = project2dataR)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -979.60    4.91    7.91   30.62 1479.45 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                  -15.453     18.224  -0.848    0.398    
+## Metro_vs_Non_MetroNon-Metro   25.711     23.973   1.072    0.285    
+## Fatalities_c                  44.976      1.368  32.884   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 157 on 195 degrees of freedom
+## Multiple R-squared:  0.8575, Adjusted R-squared:  0.8561 
+## F-statistic: 586.9 on 2 and 195 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>fit2 &lt;- lm(Positive_c ~ Metro_vs_Non_Metro * Fatalities_c, data = project2dataR)
+summary(fit2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Positive_c ~ Metro_vs_Non_Metro * Fatalities_c, 
+##     data = project2dataR)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -984.56   -5.22   -1.22   31.17 1466.35 
+## 
+## Coefficients:
+##                                          Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)                               -16.072     18.127  -0.887   0.3764
+## Metro_vs_Non_MetroNon-Metro               -40.782     44.361  -0.919   0.3591
+## Fatalities_c                               45.165      1.364  33.104   &lt;2e-16
+## Metro_vs_Non_MetroNon-Metro:Fatalities_c  -31.084     17.488  -1.777   0.0771
+##                                             
+## (Intercept)                                 
+## Metro_vs_Non_MetroNon-Metro                 
+## Fatalities_c                             ***
+## Metro_vs_Non_MetroNon-Metro:Fatalities_c .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 156.2 on 194 degrees of freedom
+## Multiple R-squared:  0.8598, Adjusted R-squared:  0.8577 
+## F-statistic: 396.7 on 3 and 194 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>ggplot(project2dataR, aes(x = Positive_c, y = Fatalities_c, group = Metro_vs_Non_Metro)) + 
+    geom_point(aes(color = Metro_vs_Non_Metro)) + geom_smooth(method = &quot;lm&quot;, 
+    se = F, fullrange = T, aes(color = Metro_vs_Non_Metro)) + 
+    theme(legend.position = c(0.9, 0.19)) + xlab(&quot;&quot;) + ggtitle(&quot;Linear Regression&quot;)</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(project2dataR, aes(Positive_c, Fatalities_c)) + geom_point(alpha = 0.9) + 
+    theme_bw()</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-3-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### Homoestacity and normalicy
+
+resids &lt;- fit$residuals
+fitvals &lt;- fit$fitted.values
+ggplot() + geom_point(aes(fitvals, resids)) + geom_hline(yintercept = 0, 
+    color = &quot;red&quot;)</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-3-3.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot() + geom_histogram(aes(resids), bins = 10)</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-3-4.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## SE
+coeftest(fit)[, 1:2]</code></pre>
+<pre><code>##                              Estimate Std. Error
+## (Intercept)                 -15.45254  18.223909
+## Metro_vs_Non_MetroNon-Metro  25.71095  23.973126
+## Fatalities_c                 44.97565   1.367693</code></pre>
+<pre class="r"><code>coeftest(fit, vcov = vcovHC(fit))[, 1:2]</code></pre>
+<pre><code>##                              Estimate Std. Error
+## (Intercept)                 -15.45254   16.80812
+## Metro_vs_Non_MetroNon-Metro  25.71095   39.38333
+## Fatalities_c                 44.97565   12.93276</code></pre>
+<p>In our linear regression, we make the following assumptions: linear relationship between x and y, randomization, equal variance, and normal distribution. From our first regression, fit, we can see that controlling for Metro vs Non Metro, Fatalities do explain variations in positives. However, Controlling for Fatalities, Metro vs Non Metro does not explain positives. This was very surprising to me. Because I would think that Metro areas would affect the number of positive cases of Covid-19. If you do a second regression of interactions, then one finds that there was no sense of variation of Positives. This is based on looking at coefficients for p vales that are less than 0.05. The analysis above can also be seen the ggplot that shows an upward slope, which would imply that there is a variation present. There wasn’t much difference between the SE and Robust SE from what I calculated. The proportion of variation of my ourcome that my model explains is 0.8598. I found this information from the Multiple R squared value from the summary(fit2) function.</p>
+<pre class="r"><code>### bootstrap standard errors
+
+samp_distn &lt;- replicate(5000, {
+    boot_dat &lt;- sample_frac(project2dataR, replace = T)  #bootstrap your data
+    fit3 &lt;- lm(Positive_c ~ Metro_vs_Non_Metro * Fatalities_c, 
+        data = boot_dat)  #fit model
+    coef(fit3)  #save coefs
+})</code></pre>
+<p>There was a big differece between my original SE and the bootstrap SE that I just calculated. It makes sense that they decreased, because since R studio is using a sampling distribution, the results should be closer to the actual numbers.</p>
+<pre class="r"><code>library(tidyverse)
+library(lmtest)
+
+data &lt;- project2dataR %&gt;% mutate(y = ifelse(Metro_vs_Non_Metro == 
+    &quot;Metro&quot;, 1, 0))
+data$Metro_vs_Non_Metro &lt;- factor(data$Metro_vs_Non_Metro, levels = c(&quot;Metro&quot;, 
+    &quot;Non-Metro&quot;))
+head(data)</code></pre>
+<pre><code>##      County Positive Fatalities Cumulative_Total_Test Population
+## 1  Anderson        8          0                    78      58954
+## 2   Andrews       19          0                     1      14771
+## 3  Angelina       23          0                   154      87755
+## 4   Aransas        2          0                    15      30013
+## 5 Armstrong        1          0                     6       2336
+## 6  Atascosa       12          1                    80      49359
+##   Metro_vs_Non_Metro NCHS_Urban_Rural_Classification Positive_c Fatalities_c y
+## 1          Non-Metro                    Micropolitan  -90.27273         -2.5 0
+## 2          Non-Metro                    Micropolitan  -79.27273         -2.5 0
+## 3          Non-Metro                    Micropolitan  -75.27273         -2.5 0
+## 4              Metro                    Medium Metro  -96.27273         -2.5 1
+## 5              Metro                    Medium Metro  -97.27273         -2.5 1
+## 6              Metro              Large Fringe Metro  -86.27273         -1.5 1</code></pre>
+<pre class="r"><code>fit4 &lt;- glm(y ~ Positive + Fatalities, data = data, family = &quot;binomial&quot;)
+coeftest(fit4)</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##               Estimate Std. Error z value  Pr(&gt;|z|)    
+## (Intercept) -1.3617004  0.2175860 -6.2582 3.894e-10 ***
+## Positive     0.0330647  0.0088848  3.7215  0.000198 ***
+## Fatalities   0.0403071  0.1984173  0.2031  0.839023    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code># log-odds scale coefs (additive)
+coef(fit4) %&gt;% round(5) %&gt;% data.frame</code></pre>
+<pre><code>##                    .
+## (Intercept) -1.36170
+## Positive     0.03306
+## Fatalities   0.04031</code></pre>
+<pre class="r"><code># odds scale coefs (multiplicative)
+coef(fit4) %&gt;% exp %&gt;% round(5) %&gt;% data.frame</code></pre>
+<pre><code>##                   .
+## (Intercept) 0.25622
+## Positive    1.03362
+## Fatalities  1.04113</code></pre>
+<pre class="r"><code>probs &lt;- predict(fit4, type = &quot;response&quot;)
+table(predict = as.numeric(probs &gt; 0.5), truth = data$y) %&gt;% 
+    addmargins</code></pre>
+<pre><code>##        truth
+## predict   0   1 Sum
+##     0   111  37 148
+##     1     8  42  50
+##     Sum 119  79 198</code></pre>
+<pre class="r"><code>## Sensitivity
+42/79</code></pre>
+<pre><code>## [1] 0.5316456</code></pre>
+<pre class="r"><code>### Specificity
+111/119</code></pre>
+<pre><code>## [1] 0.9327731</code></pre>
+<pre class="r"><code>### precision
+42/50</code></pre>
+<pre><code>## [1] 0.84</code></pre>
+<pre class="r"><code>## accuracy
+(111 + 42)/198</code></pre>
+<pre><code>## [1] 0.7727273</code></pre>
+<pre class="r"><code>### log-odds plot
+data$logit &lt;- predict(fit4, type = &quot;link&quot;)
+
+data %&gt;% ggplot() + geom_density(aes(logit, color = Metro_vs_Non_Metro, 
+    fill = Metro_vs_Non_Metro), alpha = 0.4) + theme(legend.position = c(0.85, 
+    0.85)) + geom_vline(xintercept = 0) + xlab(&quot;logit (log-odds)&quot;) + 
+    geom_rug(aes(logit, color = Metro_vs_Non_Metro)) + geom_text(x = -5, 
+    y = 0.07, label = &quot;TN = 431&quot;) + geom_text(x = -1.75, y = 0.008, 
+    label = &quot;FN = 19&quot;) + geom_text(x = 1, y = 0.006, label = &quot;FP = 13&quot;) + 
+    geom_text(x = 5, y = 0.04, label = &quot;TP = 220&quot;) + scale_x_log10() + 
+    ggtitle(&quot;Log-odds Plot&quot;)</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-5-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>### ROC
+library(plotROC)
+ROCplot &lt;- ggplot(project2dataR) + geom_roc(aes(d = Metro_vs_Non_Metro, 
+    m = Positive + Fatalities), n.cuts = 0)
+ROCplot</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-5-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.2159345</code></pre>
+<pre class="r"><code>### 10-fold CV
+set.seed(1234)
+k = 10
+data2 &lt;- project2dataR %&gt;% sample_frac
+folds &lt;- ntile(1:nrow(data2), n = 10)
+diags &lt;- NULL
+for (i in 1:10) {
+    train &lt;- data2[folds != i, ]
+    test &lt;- data2[folds == i, ]
+    truth &lt;- test$Metro_vs_Non_Metro
+    fit5 &lt;- glm(Metro_vs_Non_Metro ~ Positive + Fatalities, data = train, 
+        family = &quot;binomial&quot;)
+    probs &lt;- predict(fit5, newdata = test, type = &quot;response&quot;)
+    diags &lt;- rbind(diags, class_diag(probs, truth))
+}
+summarize_all(diags, mean)</code></pre>
+<pre><code>##         acc      sens      spec       ppv       auc
+## 1 0.7573684 0.9241142 0.5047619 0.7414336 0.7686583</code></pre>
+<p>For this analysis, I used Non Metro vs Metro for my binary variable. In this case, I made Metro 1 and Non Metro 0. The coefficients showed me that the Positive Cases due contribute to Variation in Mtero vs Non Metro; however, fatalities do not. This is a bit different from the analysis from the previous regression, but that involved multiple subdivions of urban classification not just 2. I think that might be where the difference between the two linear regressions is coming from. The sensitivity that I calculated is that the sensitivity is 0.5316456. The specificity is 0.9327731, the precision is 0.84, and the accuracy is 0.7727273. This helps us identify the the true positive rate, the true negative rate, and the proportion of actual metro data. The ROC curve I generated, treats Metro as 0 and Non-Metro as 1. The AUC calculated is 0.2159345. This is a very poor AUC, which means that the our plot is not very demonstrative of my data, because AUC usually means the probability that the model will randomly draw a positive sample higher than a randomly drawn negative sample. The following numbers: 0.7573684,0.9241142,0.5047619,0.7414336 0.7686583. The previous are the diagnostics of AAC, SENS, SPEC, PPV, AUC. This is a much better AUC, which might have to do with the fact that it is a 10 fold or repeated sampling which is supposed to make your plot more represenative of your data, because it has a lower variance.</p>
+<pre class="r"><code>### Lasso
+library(dplyr)
+library(glmnet)
+new_data &lt;- project2dataR %&gt;% select(-&quot;County&quot;, -&quot;Positive_c&quot;, 
+    -&quot;Fatalities_c&quot;)
+y &lt;- as.matrix(new_data$Positive)
+x &lt;- model.matrix(Positive ~ ., new_data)[, -1]
+head(x)</code></pre>
+<pre><code>##   Fatalities Cumulative_Total_Test Population Metro_vs_Non_MetroNon-Metro
+## 1          0                    78      58954                           1
+## 2          0                     1      14771                           1
+## 3          0                   154      87755                           1
+## 4          0                    15      30013                           0
+## 5          0                     6       2336                           0
+## 6          1                    80      49359                           0
+##   NCHS_Urban_Rural_ClassificationLarge Fringe Metro
+## 1                                                 0
+## 2                                                 0
+## 3                                                 0
+## 4                                                 0
+## 5                                                 0
+## 6                                                 1
+##   NCHS_Urban_Rural_ClassificationMedium Metro
+## 1                                           0
+## 2                                           0
+## 3                                           0
+## 4                                           1
+## 5                                           1
+## 6                                           0
+##   NCHS_Urban_Rural_ClassificationMicropolitan
+## 1                                           1
+## 2                                           1
+## 3                                           1
+## 4                                           0
+## 5                                           0
+## 6                                           0
+##   NCHS_Urban_Rural_ClassificationNon-core
+## 1                                       0
+## 2                                       0
+## 3                                       0
+## 4                                       0
+## 5                                       0
+## 6                                       0
+##   NCHS_Urban_Rural_ClassificationSmall Metro
+## 1                                          0
+## 2                                          0
+## 3                                          0
+## 4                                          0
+## 5                                          0
+## 6                                          0</code></pre>
+<pre class="r"><code>x &lt;- scale(x)
+cv &lt;- cv.glmnet(x, y)
+
+
+{
+    plot(cv$glmnet.fit, &quot;lambda&quot;, label = TRUE)
+    abline(v = log(cv$lambda.1se))
+    abline(v = log(cv$lambda.min), lty = 2)
+}</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-6-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>lasso1 &lt;- glmnet(x, y, lambda = cv$lambda.1se)
+coef(lasso1)</code></pre>
+<pre><code>## 10 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                                                          s0
+## (Intercept)                                        98.27273
+## Fatalities                                         18.88151
+## Cumulative_Total_Test                             256.10829
+## Population                                         63.80344
+## Metro_vs_Non_MetroNon-Metro                         .      
+## NCHS_Urban_Rural_ClassificationLarge Fringe Metro   .      
+## NCHS_Urban_Rural_ClassificationMedium Metro         .      
+## NCHS_Urban_Rural_ClassificationMicropolitan         .      
+## NCHS_Urban_Rural_ClassificationNon-core             .      
+## NCHS_Urban_Rural_ClassificationSmall Metro          .</code></pre>
+<pre class="r"><code>## 10-fold
+set.seed(1234)
+k = 10  #choose number of folds
+data4 &lt;- new_data[sample(nrow(new_data)), ]  #randomly order rows
+folds2 &lt;- cut(seq(1:nrow(new_data)), breaks = 10, labels = F)  #create folds
+diags2 &lt;- NULL
+for (i in 1:k) {
+    ## Create training and test sets
+    train2 &lt;- data4[folds != i, ]
+    test2 &lt;- data4[folds == i, ]
+    truth2 &lt;- test2$Positive
+    ## Train model on training set
+    fit6 &lt;- glm(Metro_vs_Non_Metro ~ ., data = train2, family = &quot;binomial&quot;)
+    probs3 &lt;- predict(fit6, newdata = test2, type = &quot;response&quot;)
+    ## Test model on test set (save all k results)
+    diags4 &lt;- rbind(diags2, class_diag(probs3, truth2))
+}
+diags4 %&gt;% summarize_all(mean)</code></pre>
+<pre><code>##         acc sens      spec        ppv auc
+## 1 0.1578947    1 0.2857143 0.08333333   1</code></pre>
+<p>The variables that were kept were the following:Fatalities, Cumulative Total Test, Population, and the NCHS Urban Rural Classification. The new AUC that I got is 1 which is much better than 0.76 from above, because one means that the our plots are representative of our data. The higher the AUC means that our model is better at predicting 0s and 1s.</p>
+<pre><code>## R version 3.4.4 (2018-03-15)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Ubuntu 18.04.4 LTS
+## 
+## Matrix products: default
+## BLAS: /usr/lib/x86_64-linux-gnu/openblas/libblas.so.3
+## LAPACK: /usr/lib/x86_64-linux-gnu/libopenblasp-r0.2.20.so
+## 
+## locale:
+##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+## 
+## attached base packages:
+## [1] methods   stats     graphics  grDevices utils     datasets  base     
+## 
+## other attached packages:
+##  [1] glmnet_2.0-16    foreach_1.4.4    Matrix_1.2-12    plotROC_2.2.1   
+##  [5] forcats_0.4.0    stringr_1.4.0    purrr_0.3.3      readr_1.3.1     
+##  [9] tidyr_1.0.0.9000 tibble_2.1.3     tidyverse_1.3.0  lmtest_0.9-37   
+## [13] zoo_1.8-6        sandwich_2.5-1   vegan_2.5-6      lattice_0.20-35 
+## [17] permute_0.9-4    dplyr_0.8.5      ggplot2_3.3.0    knitr_1.28      
+## 
+## loaded via a namespace (and not attached):
+##  [1] httr_1.4.1       jsonlite_1.6     modelr_0.1.5     assertthat_0.2.1
+##  [5] cellranger_1.1.0 yaml_2.2.0       pillar_1.4.2     backports_1.1.4 
+##  [9] glue_1.3.1       digest_0.6.20    rvest_0.3.5      colorspace_1.4-1
+## [13] htmltools_0.3.6  plyr_1.8.4       pkgconfig_2.0.2  broom_0.5.2     
+## [17] haven_2.2.0      bookdown_0.18    scales_1.0.0     mgcv_1.8-23     
+## [21] generics_0.0.2   withr_2.1.2      cli_1.1.0        magrittr_1.5    
+## [25] crayon_1.3.4     readxl_1.3.1     evaluate_0.14    fs_1.3.1        
+## [29] fansi_0.4.0      nlme_3.1-131     MASS_7.3-49      xml2_1.2.2      
+## [33] blogdown_0.18    tools_3.4.4      hms_0.5.3        formatR_1.7     
+## [37] lifecycle_0.1.0  munsell_0.5.0    reprex_0.3.0     cluster_2.0.6   
+## [41] isoband_0.2.0    compiler_3.4.4   rlang_0.4.2      grid_3.4.4      
+## [45] iterators_1.0.10 rstudioapi_0.10  labeling_0.3     rmarkdown_2.1   
+## [49] gtable_0.3.0     codetools_0.2-15 DBI_1.0.0        R6_2.4.0        
+## [53] lubridate_1.7.4  utf8_1.1.4       zeallot_0.1.0    stringi_1.4.3   
+## [57] parallel_3.4.4   Rcpp_1.0.2       vctrs_0.2.1      dbplyr_1.4.2    
+## [61] tidyselect_0.2.5 xfun_0.13</code></pre>
+<pre><code>## [1] &quot;2020-05-13 15:35:39 CDT&quot;</code></pre>
+<pre><code>##                                        sysname 
+##                                        &quot;Linux&quot; 
+##                                        release 
+##                            &quot;4.15.0-99-generic&quot; 
+##                                        version 
+## &quot;#100-Ubuntu SMP Wed Apr 22 20:32:56 UTC 2020&quot; 
+##                                       nodename 
+##                   &quot;educcomp01.ccbb.utexas.edu&quot; 
+##                                        machine 
+##                                       &quot;x86_64&quot; 
+##                                          login 
+##                                      &quot;unknown&quot; 
+##                                           user 
+##                                       &quot;bmt897&quot; 
+##                                 effective_user 
+##                                       &quot;bmt897&quot;</code></pre>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../js/docs.min.js"></script>
+<script src="../js/main.js"></script>
+
+<script src="../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

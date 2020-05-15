@@ -1,0 +1,41 @@
+---
+title: My New Post
+author: ''
+date: '2020-05-13'
+slug: my-new-post
+categories: []
+tags: []
+description: ''
+---
+
+![](/blog/2020-05-13-my-new-post_files/picwebsite.png){width=20%}
+
+```{python}
+
+##this is my python code
+import matplotlib.pyplot as plt
+import numpy as np 
+x=np.random.normal(0,1,50) #use numpy.random to take random samples
+y=np.random.normal(0,1,50)
+print(x/2+1)
+
+fruit_prices = {
+'apple': 0.65,
+'mango': 1.50,
+'strawberry': 3,
+}
+
+weight={
+'apple':100,
+'mango':200,
+'strawberry':1000,
+}
+```
+
+```{R}
+##this is my R code
+library(reticulate)
+library(ggplot2)
+##ggplot()+geom_point(aes(py$fruit_prices, py$weight))
+ggplot()+geom_point(aes(py$x,py$y))
+```

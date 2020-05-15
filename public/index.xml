@@ -6,10 +6,22 @@
     <description>Recent content on Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 02 Oct 2016 22:55:05 -0400</lastBuildDate>
+    <lastBuildDate>Fri, 15 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Fri, 15 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/</guid>
+      <description>Projects Here are some projects I have recently completed:
+  Exploratory Data Analysis with Tidyverse Tools
+  Modeling, Testing, and Classification
+  </description>
+    </item>
     
     <item>
       <title>My New Post</title>
@@ -17,19 +29,7 @@
       <pubDate>Wed, 13 May 2020 00:00:00 +0000</pubDate>
       
       <guid>/blog/my-new-post/</guid>
-      <description>##this is my python code import matplotlib.pyplot as plt import numpy as np x=np.random.normal(0,1,50) #use numpy.random to take random samples y=np.random.normal(0,1,50) print(x/2+1) ## [ 0.92223001 0.59989854 1.01556592 1.30059908 1.10294684 1.37372239 ## 0.84529826 0.43250763 0.55506759 0.90632521 1.01756042 0.90750654 ## 1.96012086 1.53449624 0.02294666 1.37574746 1.47346701 0.51511971 ## 0.32774829 0.77666763 1.24180971 0.83254385 1.09758365 0.89453547 ## 0.42887044 0.81129364 0.82129025 0.91189936 1.26452109 1.3050847 ## 0.81201519 0.86787715 0.63866232 1.14699946 1.10853309 1.67872778 ## 0.5905714 0.</description>
-    </item>
-    
-    <item>
-      <title>Projects</title>
-      <link>/projects/</link>
-      <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
-      
-      <guid>/projects/</guid>
-      <description>Projects Here are some projects I have recently completed:
-  Exploratory Data Analysis with Tidyverse Tools
-  Modeling, Testing, and Classification
-  </description>
+      <description>##this is my python code import matplotlib.pyplot as plt import numpy as np x=np.random.normal(0,1,50) #use numpy.random to take random samples y=np.random.normal(0,1,50) print(x/2+1) ## [ 0.75823612 1.33790449 0.42816627 1.18108728 0.83287913 0.97118667 ## 0.92258336 1.66808651 0.38391696 0.78344352 1.03239793 1.04266024 ## 0.99273741 1.52743485 0.52307082 0.64227971 0.99278993 0.95634051 ## 0.96799949 0.69693331 1.11748373 1.35554282 0.77848433 0.99279648 ## 1.87416599 0.87589293 2.29769199 1.22301334 0.69641184 1.08028009 ## 1.40611173 1.15231976 0.84845881 1.0857151 1.55353861 1.92338585 ## 0.98864991 1.</description>
     </item>
     
     <item>

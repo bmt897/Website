@@ -417,3 +417,25 @@ remote: Resolving deltas:   0% (0/26)[Kremote: Resolving deltas:   3% (1/26)[
 To https://github.com/bmt897/Website.git
    27f7924..6629a1d  master -> master
 ]0;/stor/home/bmt897/Bibiana/Website]0;bmt897@educcomp01: ~/Bibiana/Website[01;32mbmt897@educcomp01[00m:[01;34m~/Bibiana/Website[00m$ git add[K[Kgit add .[K[K[K[K[K[K[K[K[K[K[K[K[K[Kgit add .
+]0;/stor/home/bmt897/Bibiana/Website]0;bmt897@educcomp01: ~/Bibiana/Website[01;32mbmt897@educcomp01[00m:[01;34m~/Bibiana/Website[00m$ git commit -m "any message, but you must have a message""
+[master 844a3ec] any message, but you must have a message
+ Committer: Bibiana Toro <bmt897@educcomp01.ccbb.utexas.edu>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 1 file changed, 99 insertions(+)
+]0;/stor/home/bmt897/Bibiana/Website]0;bmt897@educcomp01: ~/Bibiana/Website[01;32mbmt897@educcomp01[00m:[01;34m~/Bibiana/Website[00m$ git push origin master
+Username for 'https://github.com': bmt897
+Password for 'https://bmt897@github.com': 
+remote: Invalid username or password.
+fatal: Authentication failed for 'https://github.com/bmt897/Website.git/'
+]0;/stor/home/bmt897/Bibiana/Website]0;bmt897@educcomp01: ~/Bibiana/Website[01;32mbmt897@educcomp01[00m:[01;34m~/Bibiana/Website[00m$ git add .
